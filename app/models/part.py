@@ -15,3 +15,4 @@ class Part(Base):
     manufacturer = relationship("Manufacturer", back_populates="parts")
     package= relationship("Package", back_populates="parts")
     type = relationship("Type", back_populates="parts")
+    inventory = relationship("Inventory", back_populates="part", uselist=False)

@@ -3,19 +3,22 @@ from sqlalchemy.orm import Session
 from app.crud.inventory import create_inventory, get_inventory_by_part_id, update_inventory_quantity
 from app.crud.manufacturer import *
 from app.crud.package import *
-from app.crud.part import create_part, get_part_by_name
+from app.crud.part import create_part, get_all_parts, get_part_by_name
 from app.crud.type import *
 from app.models.part import Part
-from app.models.manufacturer import Manufacturer
-from app.models.package import Package
-from app.models.type import Type
 from app.models.inventory import Inventory
-from app.schemas.inventory import PartInventoryQuantity, PartInventoryQuantityUpdate, PartToInventoryAdd
+from app.schemas.inventory import PartInventoryFlatGet, PartInventoryQuantity, PartInventoryQuantityUpdate, PartToInventoryAdd
 
 
 class InventoryService:
     def add_part_to_inventory(db: Session, part: PartToInventoryAdd):
-        print(part)
+        if part.quantity < 0:
+            raise HTTPException(
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                detail=f"Cannot add new part with negative quantity"
+            )
+
+
         db_manufacturer = get_manufacturer_by_name(db, part.manufacturer)
         if(not db_manufacturer):
             db_manufacturer = create_manufacturer(db, part.manufacturer)
@@ -45,11 +48,11 @@ class InventoryService:
         if not db_inventory:
             db_inventory = Inventory(
                 part_id = db_part.id,
-                quantity_available = part.quantity
+                quantity_available = part.quantity                
             )
             create_inventory(db, db_inventory)            
         else:
-            InventoryService.update_inventory_quantity(PartInventoryQuantityUpdate(part_id=part.id, quantity=part.quantity))
+            InventoryService.update_inventory_quantity(db, PartInventoryQuantityUpdate(part_id=db_part.id, quantity=part.quantity))
         
 
         return part
@@ -77,3 +80,18 @@ class InventoryService:
         return PartInventoryQuantity(updatedQuantity = db_inventory.quantity_available)
 
 
+
+    def get_parts_inventory_list(db: Session):
+        parts_list = get_all_parts(db)
+        
+        return [
+        PartInventoryFlatGet(
+            id=part.id,
+            name=part.name,
+            manufacturer=part.manufacturer.name if part.manufacturer else None,
+            part_type=part.type.part_type if part.type else None,
+            package=part.package.package_type if part.package else None,
+            quantity=part.inventory.quantity_available if part.inventory else None
+        )
+        for part in parts_list
+        ]

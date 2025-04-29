@@ -14,3 +14,11 @@ class PartInventoryQuantityUpdate(BaseModel):
 
 class PartInventoryQuantity(BaseModel):
     updatedQuantity: int
+
+class PartInventoryFlatGet(BaseModel):
+    id: int
+    name: str
+    manufacturer: str
+    part_type: str
+    package: str
+    quantity: int

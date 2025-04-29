@@ -33,3 +33,7 @@ def add_part_to_inventory(
 @router.post("/update_quantity")
 def update_quantity(update: PartInventoryQuantityUpdate, db: Session = Depends(get_db)):
     return InventoryService.update_inventory_quantity(db, update)
+
+@router.get("/get_parts_inventory")
+def get_parts_inventory_list(db: Session = Depends(get_db)):
+    return InventoryService.get_parts_inventory_list(db)

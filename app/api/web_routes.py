@@ -6,6 +6,8 @@ templates = Jinja2Templates(directory="templates")
 
 router = APIRouter()
 
+favicon_path = 'favicon.ico'
+
 @router.get("/", response_class=HTMLResponse)
 def home(request: Request):
     return templates.TemplateResponse("home.html", {"request": request})

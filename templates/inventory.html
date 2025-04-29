@@ -69,22 +69,10 @@
             <th scope="col">More</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>SI2300DS</td>
-            <td>Mosfet</td>
-            <td>SOT-23</td>
-            <td>100</td>
-            <td>
-              <button class="btn btn-success btn-sm">Details</button>
-              <button class="btn btn-primary btn-sm">Edit</button>
-              <button class="btn btn-secondary btn-sm">Delete</button>
-            </td>
-          </tr>
+        <tbody id="parts-table-body">
+          <!-- Rows will be added here -->
         </tbody>
       </table>
-    </div>
 
     <div class="modal fade" id="addComponentModal" tabindex="-1" aria-labelledby="addComponentModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -156,4 +144,35 @@
     </div>
 
   </body>
+
+  <script>
+    const tbody = document.getElementById("parts-table-body");
+  
+    // Fetch data from the API
+    fetch("/api/inventory/get_parts_inventory")
+      .then(response => response.json())  // Parse the JSON response
+      .then(parts => {
+        parts.forEach(part => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${part.id}</td>
+            <td>${part.name}</td>
+            <td>${part.part_type}</td>
+            <td>${part.package}</td>
+            <td>${part.quantity}</td>
+            <td>
+              <button class="btn btn-success btn-sm">Details</button>
+              <button class="btn btn-primary btn-sm">Edit</button>
+              <button class="btn btn-secondary btn-sm">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      })
+      .catch(error => {
+        console.error("Error fetching parts:", error);
+      });
+  </script>
+  
+  
 </html>

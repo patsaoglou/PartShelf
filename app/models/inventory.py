@@ -5,8 +5,8 @@ from db.database import Base
 class Inventory(Base):
     __tablename__ = "inventories"
 
-    id = Column(Integer, primary_key=True, index=True)
-    part_id = Column(Integer, ForeignKey("parts.id"))
+    part_id = Column(Integer, ForeignKey("parts.id"), primary_key=True)
     quantity_available = Column(Integer, default=0)
 
-    part = relationship("Part")
+    part = relationship("Part", back_populates="inventory")
+
