@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home</title>
+    <link href="../static/css/bootstrap.css" rel="stylesheet">
+    <script src="../static/js/bootstrap.js"></script>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  </head>
+  <body>
+    <nav class="navbar navbar-dark bg-dark fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">PartShelf</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Menu</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="/">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="/inventory">My Inventory</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/projects">My Projects</a>
+              </li>
+            </ul>
+            <form class="d-flex mt-3" role="search">
+              <input class="form-control me-2" type="search" placeholder="Search part" aria-label="Search">
+              <button class="btn btn-success" type="submit">Search</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-5 pt-5">
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <!-- Search Bar -->
+          <div class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Search component" aria-label="Search">
+            <button class="btn btn-success" type="submit">Search</button>
+          </div>
+        </div>
+        <div class="col-md-6 text-end">
+          <!-- Add Component and Add Component Order buttons -->
+          <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addComponentModal">Add Part</button>
+          <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addComponentOrderModal">Add Component Order</button>
+        </div>
+      </div>
+
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Type</th>
+            <th scope="col">Package</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">More</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>SI2300DS</td>
+            <td>Mosfet</td>
+            <td>SOT-23</td>
+            <td>100</td>
+            <td>
+              <button class="btn btn-success btn-sm">Details</button>
+              <button class="btn btn-primary btn-sm">Edit</button>
+              <button class="btn btn-secondary btn-sm">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal fade" id="addComponentModal" tabindex="-1" aria-labelledby="addComponentModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addComponentModalLabel">Add new Part</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="/api/inventory/add_part_to_inventory" method="post">
+              <div class="mb-3">
+                <label for="partName" class="form-label">Part Name</label>
+                <input type="text" class="form-control" id="Name" name="name" placeholder="Enter part name">
+              </div>
+              <div class="mb-3">
+                <label for="partManufacturer" class="form-label">Part Manufacturer</label>
+                <input type="text" class="form-control" id="manufacturer" name="manufacturer" placeholder="Enter Manufacturer">
+              </div>
+              <div class="mb-3">
+                <label for="partType" class="form-label">Part Type</label>
+                <input type="text" class="form-control" id="part_type" name="part_type" placeholder="Enter part type">
+              </div>
+              <div class="mb-3">
+                <label for="partPackage" class="form-label">Part Package</label>
+                <input type="text" class="form-control" id="package" name="package" placeholder="Enter part package">
+              </div>
+              <div class="mb-3">
+                <label for="partQuantity" class="form-label">Part Quantity</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Enter quantity">
+              </div>
+              <div class="mb-3">
+                <label for="partDescription" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter description"></textarea>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save to Inventory</button>
+              </div>
+          </form> 
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="addComponentOrderModal" tabindex="-1" aria-labelledby="addComponentOrderModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addComponentOrderModalLabel">Add Component Order</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="orderComponentName" class="form-label">Component Name</label>
+                <input type="text" class="form-control" id="orderComponentName" placeholder="Enter component name">
+              </div>
+              <div class="mb-3">
+                <label for="orderQuantity" class="form-label">Quantity</label>
+                <input type="number" class="form-control" id="orderQuantity" placeholder="Enter quantity to order">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save Order</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
