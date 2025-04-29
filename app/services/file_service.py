@@ -1,11 +1,12 @@
 import csv
 import io
 import re
+from fastapi import HTTPException, status
 import pandas as pd
 from sqlalchemy.orm import Session
-from app.crud.file_templates import create_file_template, get_template_by_id
+from app.crud.file_templates import create_file_template, get_available_file_templates, get_template_by_id
 from app.models.file_template import FileTemplate
-from app.schemas.file_template import FileTemplateAdd
+from app.schemas.file_template import FileTemplateAdd, FileTemplateGet
 from app.schemas.inventory import PartToInventoryAdd
 from app.services.inventory_service import InventoryService
 
@@ -21,11 +22,34 @@ class FileService:
             quantity_column =template.quantity_column
         ))
     
-    def import_order_csv_file(file_content: bytes, db):
+    def get_available_file_templates(db: Session):
+        file_templates = get_available_file_templates(db)
+        
+        return [
+        FileTemplateGet(
+            id = template.id,
+            template_type = template.template_type,
+            template_name = template.template_name,
+            
+            manufacturer_column = template.manufacturer_column,
+            part_name_column = template.part_name_column,
+            package_column = template.package_column,
+            description_column = template.description_column,
+            quantity_column = template.quantity_column,
+        )
+        for template in file_templates
+        ] 
+    
+    def import_order_csv_file(file_content: bytes, template_id: int, db: Session):
         text_io = io.StringIO(file_content.decode("utf-8"))
         reader = csv.DictReader(text_io)
 
-        file_template = get_template_by_id(db, 1)
+        file_template = get_template_by_id(db, template_id)
+        if not file_template:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Template with id={template_id} not found to parse file"
+            )
 
         for row in reader:
             description = row[file_template.description_column].strip()
