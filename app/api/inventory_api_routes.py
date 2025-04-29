@@ -44,9 +44,13 @@ def get_parts_inventory_list(db: Session = Depends(get_db)):
 def add_file_template(coloum_template: FileTemplateAdd, db: Session = Depends(get_db)):
     return FileService.add_file_template(db, coloum_template)
 
+@router.get("/get_available_file_templates")
+def get_available_file_templates(db: Session = Depends(get_db)):
+    return FileService.get_available_file_templates(db)
+
 
 @router.post("/import_order_csv_file")
-async def import_order_csv_file(order_file: UploadFile = File(...), db: Session = Depends(get_db)):
+async def import_order_csv_file(order_file: UploadFile = File(...), template_id: int = Form(...), db: Session = Depends(get_db)):
     content = await order_file.read()
-    result = FileService.import_order_csv_file(content, db)
-    return {"message": result}
+    result = FileService.import_order_csv_file(content, template_id,db)
+    return RedirectResponse("/inventory", status_code=303)

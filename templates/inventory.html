@@ -31,6 +31,19 @@
               <li class="nav-item">
                 <a class="nav-link" href="/projects">My Projects</a>
               </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Dropdown
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
+                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+              </li>
             </ul>
             <form class="d-flex mt-3" role="search">
               <input class="form-control me-2" type="search" placeholder="Search part" aria-label="Search">
@@ -112,45 +125,46 @@
                 <button type="submit" class="btn btn-primary">Save to Inventory</button>
               </div>
           </form> 
-        </div>
+          </div>
       </div>
     </div>
-
+    </div>
+      
     <div class="modal fade" id="addComponentOrderModal" tabindex="-1" aria-labelledby="addComponentOrderModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="addComponentOrderModalLabel">Add Component Order</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="mb-3">
-                <label for="orderComponentName" class="form-label">Component Name</label>
-                <input type="text" class="form-control" id="orderComponentName" placeholder="Enter component name">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form action="/api/inventory/import_order_csv_file" method="post" enctype="multipart/form-data">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addComponentOrderModalLabel">Import Parts Order</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              <div class="mb-3">
-                <label for="orderQuantity" class="form-label">Quantity</label>
-                <input type="number" class="form-control" id="orderQuantity" placeholder="Enter quantity to order">
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label for="orderFile" class="form-label">Upload CSV File</label>
+                  <input class="form-control" type="file" id="orderFile" name="order_file" accept=".csv" required>
+                </div>
+                <div class="mb-3">
+                  <label for="templateSelect" class="form-label">Select Template</label>
+                  <select class="form-select" id="templateSelect" name="template_id" required>
+                  </select>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Import</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
               </div>
             </form>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save Order</button>
-          </div>
         </div>
       </div>
-    </div>
 
   </body>
 
   <script>
     const tbody = document.getElementById("parts-table-body");
   
-    // Fetch data from the API
     fetch("/api/inventory/get_parts_inventory")
-      .then(response => response.json())  // Parse the JSON response
+      .then(response => response.json()) 
       .then(parts => {
         parts.forEach(part => {
           const row = document.createElement("tr");
@@ -174,5 +188,23 @@
       });
   </script>
   
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      fetch("/api/inventory/get_available_file_templates")
+        .then(response => response.json())
+        .then(templates => {
+          const select = document.getElementById("templateSelect");
+          templates.forEach(template => {
+            const option = document.createElement("option");
+            option.value = template.id;
+            option.textContent = template.template_name;
+            select.appendChild(option);
+          });
+        })
+        .catch(error => {
+          console.error("Error fetching templates:", error);
+        });
+    });
+  </script>
   
 </html>
