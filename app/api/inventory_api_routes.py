@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Depends, Form
+from fastapi import APIRouter, Depends, File, Form, UploadFile
 from fastapi.responses import RedirectResponse
+from app.schemas.file_template import FileTemplateAdd
 from app.schemas.inventory import *
+from app.services.file_service import FileService
 from app.services.inventory_service import *
 from db.database import get_db
 
@@ -37,3 +39,14 @@ def update_quantity(update: PartInventoryQuantityUpdate, db: Session = Depends(g
 @router.get("/get_parts_inventory")
 def get_parts_inventory_list(db: Session = Depends(get_db)):
     return InventoryService.get_parts_inventory_list(db)
+
+@router.post("/add_file_template")
+def add_file_template(coloum_template: FileTemplateAdd, db: Session = Depends(get_db)):
+    return FileService.add_file_template(db, coloum_template)
+
+
+@router.post("/import_order_csv_file")
+async def import_order_csv_file(order_file: UploadFile = File(...), db: Session = Depends(get_db)):
+    content = await order_file.read()
+    result = FileService.import_order_csv_file(content, db)
+    return {"message": result}
