@@ -7,6 +7,8 @@ A modern inventory management web app for electronic components. Easily track pa
 
 ## **Still Under Development**
 
+<img src="./Resources/swagger.JPG.PNG">
+
 ## Features
 ### Inventory ManagementB
 - Add parts with manufacturer, type, package, and description
