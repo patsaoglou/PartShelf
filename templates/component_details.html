@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Component Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../static/css/bootstrap.css" rel="stylesheet">
+    <script src="../static/js/bootstrap.js"></script>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  </head>
+  <body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark bg-dark fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">PartShelf</a>
+        <a class="btn btn-outline-light" href="/inventory">Back to Inventory</a>
+      </div>
+    </nav>
+
+    <div class="container mt-5 pt-5">
+      <div class="row">
+        <div class="col-md-8">
+          <h2 id="part-name" class="mb-1">Component Name</h2>
+          <h5 class="text-muted mb-3" id="part-manufacturer">Manufacturer</h5>
+        </div>
+        <div class="col-md-4 text-md-end text-start mb-3">
+          <button class="btn btn-primary me-2">Edit</button>
+          <button class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <strong>Part ID:</strong> <span id="part-id"></span><br>
+              <strong>Type:</strong> <span id="part-type"></span><br>
+              <strong>Package:</strong> <span id="part-package"></span>
+            </div>
+            <div class="col-md-6">
+              <strong>Quantity:</strong> <span id="part-quantity"></span><br>
+              <strong>In Stock:</strong> <span class="text-success">Yes</span><br>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <strong>Description</strong>
+        </div>
+        <div class="card-body">
+          <p id="part-description" class="mb-0 text-muted"></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const partId = urlParams.get("part_id");
+      
+        fetch(`/api/inventory/get_part_by_id?part_id=${partId}`)
+          .then(res => res.json())
+          .then(data => {
+            document.getElementById("part-id").textContent = data.id;
+            document.getElementById("part-name").textContent = data.name;
+            document.getElementById("part-manufacturer").textContent = data.manufacturer;
+            document.getElementById("part-type").textContent = data.part_type;
+            document.getElementById("part-package").textContent = data.package;
+            document.getElementById("part-quantity").textContent = data.quantity;
+            document.getElementById("part-description").textContent = data.description;
+          })
+          .catch(error => {
+            console.error("Error loading component details:", error);
+          });
+      </script>
+      
+  </body>
+</html>

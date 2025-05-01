@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, File, Form, UploadFile
+from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 from fastapi.responses import RedirectResponse
 from app.schemas.file_template import FileTemplateAdd
 from app.schemas.inventory import *
@@ -54,3 +54,12 @@ async def import_order_csv_file(order_file: UploadFile = File(...), template_id:
     content = await order_file.read()
     result = FileService.import_order_csv_file(content, template_id,db)
     return RedirectResponse("/inventory", status_code=303)
+
+@router.get("/get_part_by_id")
+def get_part_by_id(part_id: int = Query(..., description="ID of the part to retrieve"), db: Session = Depends(get_db)):
+    return InventoryService.get_part_by_id(db, part_id)
+
+@router.get("/search")
+def search_in_inventory(search_key:str, db: Session = Depends(get_db)):
+    return InventoryService.search(search_key, db)
+    

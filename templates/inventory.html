@@ -57,12 +57,12 @@
     <div class="container mt-5 pt-5">
       <div class="row mb-4">
         <div class="col-md-6">
-          <!-- Search Bar -->
-          <div class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search component" aria-label="Search">
-            <button class="btn btn-success" type="submit">Search</button>
-          </div>
-        </div>
+            <!-- Search Bar -->
+            <div class="d-flex">
+              <input class="form-control me-2" type="search" id="searchInput" placeholder="Search component" aria-label="Search">
+              <button class="btn btn-success" id="searchButton" type="button">Search</button>
+            </div>
+          </div>          
         <div class="col-md-6 text-end">
           <!-- Add Component and Add Component Order buttons -->
           <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addComponentModal">Add Part</button>
@@ -165,7 +165,7 @@
   
     fetch("/api/inventory/get_parts_inventory")
       .then(response => response.json()) 
-      .then(parts => {
+     . then(parts => {
         parts.forEach(part => {
           const row = document.createElement("tr");
           row.innerHTML = `
@@ -174,11 +174,11 @@
             <td>${part.part_type}</td>
             <td>${part.package}</td>
             <td>${part.quantity}</td>
-            <td>
-              <button class="btn btn-success btn-sm">Details</button>
-              <button class="btn btn-primary btn-sm">Edit</button>
-              <button class="btn btn-secondary btn-sm">Delete</button>
-            </td>
+                <td>
+                <a href="/component_details?part_id=${part.id}" class="btn btn-success btn-sm">Details</a>
+                <button class="btn btn-primary btn-sm">Edit</button>
+                <button class="btn btn-secondary btn-sm">Delete</button>
+                </td>
           `;
           tbody.appendChild(row);
         });
@@ -206,5 +206,44 @@
         });
     });
   </script>
+
+    <script>
+    document.getElementById('searchButton').addEventListener('click', function() {
+      var searchKey = document.getElementById('searchInput').value.trim();
+
+      if (searchKey) {
+        // Make the API request
+        fetch(`http://127.0.0.1:8000/api/inventory/search?search_key=${searchKey}`)
+          .then(response => response.json())
+          . then(parts => {
+
+                const tbody = document.querySelector('tbody'); 
+                tbody.innerHTML = '';
+                parts.forEach(part => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${part.id}</td>
+                    <td>${part.name}</td>
+                    <td>${part.part_type}</td>
+                    <td>${part.package}</td>
+                    <td>${part.quantity}</td>
+                        <td>
+                        <a href="/component_details?part_id=${part.id}" class="btn btn-success btn-sm">Details</a>
+                        <button class="btn btn-primary btn-sm">Edit</button>
+                        <button class="btn btn-secondary btn-sm">Delete</button>
+                        </td>
+                `;
+                tbody.appendChild(row);
+                });
+            })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      } else {
+        alert('Please enter a search term');
+      }
+    });
+  </script>
+  
   
 </html>

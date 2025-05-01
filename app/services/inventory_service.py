@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 from app.crud.inventory import create_inventory, get_inventory_by_part_id, update_inventory_quantity
 from app.crud.manufacturer import *
 from app.crud.package import *
-from app.crud.part import create_part, get_all_parts, get_part_by_name
+from app.crud.part import create_part, get_all_parts, get_part_by_id, get_part_by_name, get_parts_containing_key
 from app.crud.type import *
 from app.models.part import Part
 from app.models.inventory import Inventory
-from app.schemas.inventory import PartInventoryFlatGet, PartInventoryQuantity, PartInventoryQuantityUpdate, PartToInventoryAdd
+from app.schemas.inventory import PartDetailsFlatGet, PartInventoryFlatGet, PartInventoryQuantity, PartInventoryQuantityUpdate, PartToInventoryAdd
 
 
 class InventoryService:
@@ -83,6 +83,41 @@ class InventoryService:
 
     def get_parts_inventory_list(db: Session):
         parts_list = get_all_parts(db)
+        
+        return [
+        PartInventoryFlatGet(
+            id=part.id,
+            name=part.name,
+            manufacturer=part.manufacturer.name if part.manufacturer else None,
+            part_type=part.type.part_type if part.type else None,
+            package=part.package.package_type if part.package else None,
+            quantity=part.inventory.quantity_available if part.inventory else None
+        )
+        for part in parts_list
+        ]
+
+
+    def get_part_by_id(db: Session, id: int):
+        part_found = get_part_by_id(db, id)
+        if part_found is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Part with id = {id} does not exist"
+            )
+        
+        return PartDetailsFlatGet(
+            id=part_found.id,
+            name=part_found.name,
+            manufacturer=part_found.manufacturer.name if part_found.manufacturer else None,
+            part_type=part_found.type.part_type if part_found.type else None,
+            package=part_found.package.package_type if part_found.package else None,
+            quantity=part_found.inventory.quantity_available if part_found.inventory else None,
+            description=part_found.description if part_found.description else None
+        )
+        
+
+    def search(search_key:str, db: Session):
+        parts_list = get_parts_containing_key(db, search_key)
         
         return [
         PartInventoryFlatGet(

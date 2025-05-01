@@ -24,3 +24,17 @@ def get_all_parts(db: Session, limit = 0):
         joinedload(Part.package),
         joinedload(Part.inventory)
     ).all()
+
+def get_part_by_id(db: Session, id: int):
+    
+    db_part= db.query(Part).filter(Part.id == id).first()
+    return db_part
+
+def get_parts_containing_key(db: Session, search_key: str):
+    return db.query(Part).options(
+        joinedload(Part.manufacturer),
+        joinedload(Part.type),
+        joinedload(Part.package),
+        joinedload(Part.inventory)
+    ).filter(Part.name.ilike(f'%{search_key}%')).all()
+    

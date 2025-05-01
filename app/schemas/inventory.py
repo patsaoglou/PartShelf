@@ -22,3 +22,12 @@ class PartInventoryFlatGet(BaseModel):
     part_type: str
     package: str
     quantity: int
+
+class PartDetailsFlatGet(BaseModel):
+    id: int
+    name: str
+    manufacturer: str
+    part_type: str
+    package: str
+    quantity: int
+    description: str
