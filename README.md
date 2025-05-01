@@ -1,11 +1,13 @@
 # PartShelf 
 **Electronics Inventory Management System**
 
-<img src="./Resources/Inventory.PNG">
-
 A modern inventory management web app for electronic components. Easily track parts, quantities, and supplier info. Import from CSVs, auto-extract details like value/type, and integrate smart part registration.
 
+<img src="./Resources/Inventory.PNG">
+
 ## **Still Under Development**
+
+<img src="./Resources/swagger.JPG">
 
 ## Features
 ### Inventory ManagementB
