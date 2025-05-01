@@ -24,10 +24,6 @@
           <h2 id="part-name" class="mb-1">Component Name</h2>
           <h5 class="text-muted mb-3" id="part-manufacturer">Manufacturer</h5>
         </div>
-        <div class="col-md-4 text-md-end text-start mb-3">
-          <button class="btn btn-primary me-2">Edit</button>
-          <button class="btn btn-danger">Delete</button>
-        </div>
       </div>
 
       <div class="card shadow-sm mb-4">
@@ -39,14 +35,14 @@
               <strong>Package:</strong> <span id="part-package"></span>
             </div>
             <div class="col-md-6">
-              <strong>Quantity:</strong> <span id="part-quantity"></span><br>
-              <strong>In Stock:</strong> <span class="text-success">Yes</span><br>
-            </div>
+                <strong>Quantity:</strong> <span id="part-quantity"></span><br>
+                <strong>In Stock:</strong> <span id="in-stock-status" class="text-success">Yes</span><br>
+              </div>              
           </div>
         </div>
       </div>
 
-      <div class="card shadow-sm">
+      <div class="card shadow-sm mb-4">
         <div class="card-header bg-light">
           <strong>Description</strong>
         </div>
@@ -54,27 +50,142 @@
           <p id="part-description" class="mb-0 text-muted"></p>
         </div>
       </div>
-    </div>
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <strong>Part Options</strong>
+        </div>
+        <div class="card-body">
 
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const partId = urlParams.get("part_id");
+            <!-- Update Quantity -->
+            <div class="mb-4">
+              <h6 class="fw-bold">Update Quantity</h6>
+              <div class="input-group input-group-sm">
+                <input type="number" id="updateQuantity" class="form-control" placeholder="Enter new quantity">
+                <button class="btn btn-primary" id="updateQuantityBtn">Update</button>
+              </div>
+            </div>
+          
+            <!-- Set Quantity Threshold -->
+            <div class="mb-4">
+              <h6 class="fw-bold">Notification Threshold</h6>
+              <div class="input-group input-group-sm">
+                <input type="number" id="notifyThreshold" class="form-control" placeholder="Enter threshold">
+                <button class="btn btn-warning" id="setThresholdBtn">Set Threshold</button>
+              </div>
+            </div>
+          
+            <!-- Additional Actions -->
+            <hr>
+            <div class="d-grid gap-2 d-md-block">
+              <button class="btn btn-secondary btn-sm me-2" id="viewHistoryBtn">View Usage History</button>
+              <button class="btn btn-info btn-sm" id="exportDetailsBtn">Export Details</button>
+              <button class="btn btn-danger btn-sm" id="deletePartBtn">Delete Part</button>
+            </div>
+          </div>
+          
       
-        fetch(`/api/inventory/get_part_by_id?part_id=${partId}`)
-          .then(res => res.json())
-          .then(data => {
-            document.getElementById("part-id").textContent = data.id;
-            document.getElementById("part-name").textContent = data.name;
-            document.getElementById("part-manufacturer").textContent = data.manufacturer;
-            document.getElementById("part-type").textContent = data.part_type;
-            document.getElementById("part-package").textContent = data.package;
-            document.getElementById("part-quantity").textContent = data.quantity;
-            document.getElementById("part-description").textContent = data.description;
-          })
-          .catch(error => {
-            console.error("Error loading component details:", error);
-          });
-      </script>
+
+    </div>
+    <footer class="text-center py-2 bg-dark text-light fixed-bottom">
+    <small>&copy; 2025 PartShelf. All rights reserved.</small>
+  </footer>
       
   </body>
-</html>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const partId = urlParams.get("part_id");
+  
+    fetch(`/api/inventory/get_part_by_id?part_id=${partId}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("part-id").textContent = data.id;
+        document.getElementById("part-name").textContent = data.name;
+        document.getElementById("part-manufacturer").textContent = data.manufacturer;
+        document.getElementById("part-type").textContent = data.part_type;
+        document.getElementById("part-package").textContent = data.package;
+        document.getElementById("part-quantity").textContent = data.quantity;
+        document.getElementById("part-description").textContent = data.description;
+        
+        const quantity = data.quantity;  // Assuming you get this from your fetched part
+
+        const inStockSpan = document.getElementById('in-stock-status');
+        if (quantity > 0) {
+        inStockSpan.textContent = 'Yes';
+        inStockSpan.classList.remove('text-danger');
+        inStockSpan.classList.add('text-success');
+        } else {
+        inStockSpan.textContent = 'No';
+        inStockSpan.classList.remove('text-success');
+        inStockSpan.classList.add('text-danger');
+        }
+    
+    })
+      .catch(error => {
+        console.error("Error loading component details:", error);
+      });
+
+
+     
+      function updateQuantity() {
+        const newQuantity = document.getElementById('updateQuantity').value.trim();
+        if (!newQuantity || isNaN(newQuantity)) {
+            alert('Please enter a valid quantity');
+            return;
+        }
+
+        fetch('http://127.0.0.1:8000/api/inventory/update_quantity', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+            part_id: partId,
+            quantity: parseInt(newQuantity)
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+            throw new Error('Failed to update quantity');
+            }
+            return response.json();
+        })
+        .then(data => {
+            location.reload(); 
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error updating quantity');
+        });
+        }
+
+
+        function deletePart() {
+            const confirmed = window.confirm("Are you sure you want to delete this part?");
+
+            if (!confirmed) return; 
+
+            fetch(`/api/inventory/delete_part?part_id=${partId}`, {
+            method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                throw new Error('Failed to delete part');
+                }
+                return response.json();
+            })
+            .then(data => {
+                location.reload(); 
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting part');
+            });
+        }
+
+    document.getElementById('updateQuantityBtn').addEventListener('click', updateQuantity);
+
+    document.getElementById('deletePartBtn').addEventListener('click', deletePart);
+
+  </script>
+
+  </html>

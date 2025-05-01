@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.crud.inventory import create_inventory, get_inventory_by_part_id, update_inventory_quantity
 from app.crud.manufacturer import *
 from app.crud.package import *
-from app.crud.part import create_part, get_all_parts, get_part_by_id, get_part_by_name, get_parts_containing_key
+from app.crud.part import create_part, delete_part, get_all_parts, get_part_by_id, get_part_by_name, get_parts_containing_key
 from app.crud.type import *
 from app.models.part import Part
 from app.models.inventory import Inventory
@@ -130,3 +130,16 @@ class InventoryService:
         )
         for part in parts_list
         ]
+    
+    def delete_part_with_id(part_id:int, db: Session):
+        part_to_delete = get_part_by_id(db, part_id)
+        if part_to_delete is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,  
+                detail=f"Part to delete with id = {part_id} does not exist"
+            )    
+        
+        delete_part(db, part_to_delete)
+
+
+

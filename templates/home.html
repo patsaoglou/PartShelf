@@ -7,7 +7,47 @@
     <link href="../static/css/bootstrap.css" rel="stylesheet">
     <script src="../static/js/bootstrap.js"></script>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  </head>
+    <style>
+        html, body {
+          height: 100%;
+        }
+      
+        body {
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+          background-color: #f8f9fa;
+        }
+      
+        main {
+          flex: 1;
+        }
+      
+        .hero {
+          padding: 100px 0;
+          text-align: center;
+        }
+      
+        .hero h1 {
+          font-size: 3rem;
+          font-weight: bold;
+        }
+      
+        .hero p {
+          font-size: 1.25rem;
+          color: #6c757d;
+        }
+      
+        footer {
+          background-color: #212529;
+          color: #ffffff;
+          text-align: center;
+          padding: 1rem;
+        }
+      </style>
+      
+
+</head>
   <body>
     <nav class="navbar navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
@@ -40,5 +80,34 @@
           </div>
         </div>
       </nav>
+
+      <div class="hero bg-light mt-5 pt-5">
+        <div class="container">
+          <h1>Welcome to PartShelf</h1>
+          <p class="mb-4">Your open-source component inventory manager for electronics projects.</p>
+          <a href="/inventory" class="btn btn-primary btn-lg">Browse Components</a>
+        </div>
+      </div>
+  
+      <div class="container my-5">
+        <div class="row text-center">
+          <div class="col-md-4">
+            <h4>Organize</h4>
+            <p>Keep track of parts with categories, manufacturers, and packages.</p>
+          </div>
+          <div class="col-md-4">
+            <h4>Search & Filter</h4>
+            <p>Find components quickly with smart searching and filters.</p>
+          </div>
+          <div class="col-md-4">
+            <h4>Maintain Stock</h4>
+            <p>Monitor quantities and availability for your projects.</p>
+          </div>
+        </div>
+      </div>
+  
+      <footer class="text-center py-2 bg-dark text-light fixed-bottom">
+        <small>&copy; 2025 PartShelf. All rights reserved.</small>
+      </footer>
   </body>
 </html>

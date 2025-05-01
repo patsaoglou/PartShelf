@@ -37,4 +37,8 @@ def get_parts_containing_key(db: Session, search_key: str):
         joinedload(Part.package),
         joinedload(Part.inventory)
     ).filter(Part.name.ilike(f'%{search_key}%')).all()
+
+def delete_part(db: Session, part_to_delete: Part):
     
+    db.delete(part_to_delete)
+    db.commit()

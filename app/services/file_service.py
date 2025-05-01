@@ -75,7 +75,7 @@ class FileService:
         value_match = re.search(r'\b\d+(?:\.\d+)?\s?(kΩ|Ω|MΩ|nF|uF|pF|F|H|mH|µH)\b', description, re.IGNORECASE)
         value = value_match.group(0) if value_match else ""
 
-        type_match = re.search(r'(Thick Film Resistor|Chip Resistor|Capacitor|Multilayer Ceramic Capacitor)', description, re.IGNORECASE)
+        type_match = re.search(r'(Thick Film Resistor|Chip Resistor|Capacitor|Multilayer Ceramic Capacitor|Operational Amplifier)', description, re.IGNORECASE)
         part_type = type_match.group(0) if type_match else ""
         
         return value, part_type

@@ -5,7 +5,10 @@ A modern inventory management web app for electronic components. Easily track pa
 
 <img src="./Resources/Inventory.PNG">
 
-## **Still Under Development**
+## **Still Under Development - Pics**
+<img src="./Resources/Details.PNG">
+
+<img src="./Resources/home.PNG">
 
 <img src="./Resources/swagger.JPG">
 

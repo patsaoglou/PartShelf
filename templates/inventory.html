@@ -46,8 +46,8 @@
               </li>
             </ul>
             <form class="d-flex mt-3" role="search">
-              <input class="form-control me-2" type="search" placeholder="Search part" aria-label="Search">
-              <button class="btn btn-success" type="submit">Search</button>
+                <input class="form-control me-2" type="search" id="searchInputMenu" placeholder="Search part" aria-label="Search">
+              <button class="btn btn-success" id="searchButtonAlt" type="button">Search</button>
             </form>
           </div>
         </div>
@@ -59,14 +59,14 @@
         <div class="col-md-6">
             <!-- Search Bar -->
             <div class="d-flex">
-              <input class="form-control me-2" type="search" id="searchInput" placeholder="Search component" aria-label="Search">
+              <input class="form-control me-2" type="search" id="searchInput" placeholder="Search part" aria-label="Search">
               <button class="btn btn-success" id="searchButton" type="button">Search</button>
             </div>
           </div>          
         <div class="col-md-6 text-end">
           <!-- Add Component and Add Component Order buttons -->
           <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addComponentModal">Add Part</button>
-          <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addComponentOrderModal">Add Component Order</button>
+          <button class="btn btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addComponentOrderModal">Add Component Order</button>
         </div>
       </div>
 
@@ -158,6 +158,8 @@
         </div>
       </div>
 
+
+
   </body>
 
   <script>
@@ -176,8 +178,6 @@
             <td>${part.quantity}</td>
                 <td>
                 <a href="/component_details?part_id=${part.id}" class="btn btn-success btn-sm">Details</a>
-                <button class="btn btn-primary btn-sm">Edit</button>
-                <button class="btn btn-secondary btn-sm">Delete</button>
                 </td>
           `;
           tbody.appendChild(row);
@@ -208,9 +208,13 @@
   </script>
 
     <script>
-    document.getElementById('searchButton').addEventListener('click', function() {
+    function handleSearchClick() {
       var searchKey = document.getElementById('searchInput').value.trim();
-
+      
+      if(!searchKey){
+        searchKey = document.getElementById('searchInputMenu').value.trim();
+      }
+      
       if (searchKey) {
         // Make the API request
         fetch(`http://127.0.0.1:8000/api/inventory/search?search_key=${searchKey}`)
@@ -229,8 +233,6 @@
                     <td>${part.quantity}</td>
                         <td>
                         <a href="/component_details?part_id=${part.id}" class="btn btn-success btn-sm">Details</a>
-                        <button class="btn btn-primary btn-sm">Edit</button>
-                        <button class="btn btn-secondary btn-sm">Delete</button>
                         </td>
                 `;
                 tbody.appendChild(row);
@@ -242,7 +244,11 @@
       } else {
         alert('Please enter a search term');
       }
-    });
+    };
+    document.getElementById('searchButton').addEventListener('click', handleSearchClick);
+    document.getElementById('searchButtonAlt').addEventListener('click', handleSearchClick);  // Second button
+
+
   </script>
   
   

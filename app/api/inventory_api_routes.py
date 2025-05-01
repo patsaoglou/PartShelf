@@ -63,3 +63,9 @@ def get_part_by_id(part_id: int = Query(..., description="ID of the part to retr
 def search_in_inventory(search_key:str, db: Session = Depends(get_db)):
     return InventoryService.search(search_key, db)
     
+
+@router.delete("/delete_part")
+def delete_part_with_id(part_id:int, db: Session = Depends(get_db)):
+    InventoryService.delete_part_with_id(part_id, db)
+
+    return {"message": f"Part with ID {part_id} deleted successfully"}
